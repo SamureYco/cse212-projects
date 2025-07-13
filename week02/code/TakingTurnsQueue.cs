@@ -44,10 +44,14 @@ public class TakingTurnsQueue
             {
                 person.Turns -= 1;
                 _people.Enqueue(person);
-            }
+            }else if (person.Turns <= 0) // infinite turns
+    {
+        _people.Enqueue(person);
+    }
+    // If Turns == 1 → do not re-add the person
 
-            return person;
-        }
+    return person;
+}
     }
 
     public override string ToString()
