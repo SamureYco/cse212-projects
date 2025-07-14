@@ -7,6 +7,8 @@
 /// less than they will stay in the queue forever.  If a person is out of turns then they will 
 /// not be added back into the queue.
 /// </summary>
+using System.Diagnostics;
+
 public class TakingTurnsQueue
 {
     private readonly PersonQueue _people = new();
@@ -31,28 +33,33 @@ public class TakingTurnsQueue
     /// person has an infinite number of turns.  An error exception is thrown 
     /// if the queue is empty.
     /// </summary>
-    public Person GetNextPerson()
+public Person GetNextPerson()
+{
+    if (_people.IsEmpty())
     {
-        if (_people.IsEmpty())
-        {
-            throw new InvalidOperationException("No one in the queue.");
-        }
-        else
-        {
-            Person person = _people.Dequeue();
-            if (person.Turns > 1)
-            {
-                person.Turns -= 1;
-                _people.Enqueue(person);
-            }else if (person.Turns <= 0) // infinite turns
+        throw new InvalidOperationException("No one in the queue.");
+    }
+
+    Person person = _people.Dequeue();
+Debug.WriteLine($"[DEBUG] {person.Name} - Before: {person.Turns}");
+
+    if (person.Turns > 1)
     {
+        person.Turns--;
         _people.Enqueue(person);
     }
-    // If Turns == 1 → do not re-add the person
+    else if (person.Turns == 1)
+    {
+        person.Turns--; // Llega a 0, pero ya no se reencola
+    }
+    else if (person.Turns <= 0) // Infinite turns
+    {
+        _people.Enqueue(person); // No tocar el valor
+    }
 
     return person;
 }
-    }
+
 
     public override string ToString()
     {
