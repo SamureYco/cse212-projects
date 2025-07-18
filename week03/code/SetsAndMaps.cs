@@ -95,6 +95,8 @@ public static class SetsAndMaps
     foreach (char c in clean1)
     {
         if (!count1.ContainsKey(c))
+
+        
             count1[c] = 0;
         count1[c]++;
     }
@@ -148,6 +150,22 @@ public static class SetsAndMaps
         // on those classes so that the call to Deserialize above works properly.
         // 2. Add code below to create a string out each place a earthquake has happened today and its magitude.
         // 3. Return an array of these string descriptions.
-        return [];
+        var result = new List<string>();
+
+    if (featureCollection?.Features != null)
+    {
+        foreach (var feature in featureCollection.Features)
+        {
+            var place = feature.Properties.Place;
+            var mag = feature.Properties.Mag;
+
+            if (!string.IsNullOrWhiteSpace(place) && mag.HasValue)
+            {
+                result.Add($"{place} - Mag {mag}");
+            }
+        }
+    }
+
+    return result.ToArray();
     }
 }
